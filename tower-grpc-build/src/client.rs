@@ -35,11 +35,12 @@ impl ServiceGenerator {
                             scope: &mut codegen::Scope)
     {
         for method in &service.methods {
-            if !method.client_streaming {
+            if !method.client_streaming && method.input_type != "()" {
                 scope.import_type(&method.input_type, 1);
             }
-
-            scope.import_type(&method.output_type, 1);
+            if method.output_type != "()" {
+                scope.import_type(&method.output_type, 1);
+            }
         }
     }
 

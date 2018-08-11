@@ -58,9 +58,11 @@ macro_rules! try_ready {
 
             // Define service modules
             for method in &service.methods {
-                methods.import_type(&method.input_type, 2);
+                if method.input_type != "()" {
+                    methods.import_type(&method.input_type, 2);
+                }
 
-                if !method.server_streaming {
+                if !method.server_streaming && method.output_type != "()" {
                     methods.import_type(&method.output_type, 2);
                 }
 
@@ -108,7 +110,7 @@ macro_rules! try_ready {
                 ;
 
             for &ty in [&method.input_type, &method.output_type].iter() {
-                if !::is_imported_type(ty) {
+                if !::is_imported_type(ty) && ty != "()" {
                     let (path, ty) = ::super_import(ty, 1);
 
                     scope.import(&path, &ty);
